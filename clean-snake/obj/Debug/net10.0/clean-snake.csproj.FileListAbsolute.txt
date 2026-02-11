@@ -1,0 +1,15 @@
+C:\Users\danul\Documents\Study\8PO\clean-snake\clean-snake\bin\Debug\net10.0\clean-snake.exe
+C:\Users\danul\Documents\Study\8PO\clean-snake\clean-snake\bin\Debug\net10.0\clean-snake.deps.json
+C:\Users\danul\Documents\Study\8PO\clean-snake\clean-snake\bin\Debug\net10.0\clean-snake.runtimeconfig.json
+C:\Users\danul\Documents\Study\8PO\clean-snake\clean-snake\bin\Debug\net10.0\clean-snake.dll
+C:\Users\danul\Documents\Study\8PO\clean-snake\clean-snake\bin\Debug\net10.0\clean-snake.pdb
+C:\Users\danul\Documents\Study\8PO\clean-snake\clean-snake\obj\Debug\net10.0\clean-snake.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\danul\Documents\Study\8PO\clean-snake\clean-snake\obj\Debug\net10.0\clean-snake.AssemblyInfoInputs.cache
+C:\Users\danul\Documents\Study\8PO\clean-snake\clean-snake\obj\Debug\net10.0\clean-snake.AssemblyInfo.cs
+C:\Users\danul\Documents\Study\8PO\clean-snake\clean-snake\obj\Debug\net10.0\clean-snake.csproj.CoreCompileInputs.cache
+C:\Users\danul\Documents\Study\8PO\clean-snake\clean-snake\obj\Debug\net10.0\clean-snake.sourcelink.json
+C:\Users\danul\Documents\Study\8PO\clean-snake\clean-snake\obj\Debug\net10.0\clean-snake.dll
+C:\Users\danul\Documents\Study\8PO\clean-snake\clean-snake\obj\Debug\net10.0\refint\clean-snake.dll
+C:\Users\danul\Documents\Study\8PO\clean-snake\clean-snake\obj\Debug\net10.0\clean-snake.pdb
+C:\Users\danul\Documents\Study\8PO\clean-snake\clean-snake\obj\Debug\net10.0\clean-snake.genruntimeconfig.cache
+C:\Users\danul\Documents\Study\8PO\clean-snake\clean-snake\obj\Debug\net10.0\ref\clean-snake.dll
