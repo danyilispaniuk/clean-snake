@@ -12,6 +12,29 @@ using System.Threading;
 ////https://www.youtube.com/watch?v=SGZgvMwjq2U
 namespace Snake
 {
+    class Window
+    {
+        public int WindowHeight { get; set; }
+        public int WindowWidth { get; set; }
+        public int BackgroundColor { get; set; }
+        public int ForegroundColor { get; set; }
+
+        public Window(){
+            WindowHeight = 400;
+            WindowWidth = 600;
+            ForegroundColor = ((int)Console.ForegroundColor);
+            BackgroundColor = ((int)Console.BackgroundColor);
+        }
+
+        public Window(int windowHeight, int windowWidth, int backgroundColor, int foregroundColor)
+        {
+            WindowHeight = windowHeight;
+            WindowWidth = windowWidth;
+            ForegroundColor = foregroundColor;
+            BackgroundColor =   backgroundColor;
+        }
+    }
+
     class Program
     {
         static void Main(string[] args)
@@ -147,7 +170,7 @@ namespace Snake
             Console.WriteLine("Game over, Score: " + score);
             Console.SetCursorPosition(screenwidth / 5, screenheight / 2 + 1);
         }
-        class pixel
+        class Pixel
         {
             public int xpos { get; set; }
             public int ypos { get; set; }
