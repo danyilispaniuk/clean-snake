@@ -71,7 +71,7 @@ namespace Snake
 
             Console.SetBufferSize(Console.WindowWidth, Console.WindowHeight);
 
-            var game = new Game(baseTickMs: 100);
+            var game = new Game(baseTickMs: 100, gameWindow);
             game.Run();
 
             Console.SetCursorPosition(2, Console.WindowHeight - 1);
@@ -83,6 +83,8 @@ namespace Snake
     internal sealed class Game
     {
         public enum GameStatus { Started, Finished, Won, Lost }
+
+        public Window window;
 
         private int screenWidth;
         private int screenHeight;
@@ -117,13 +119,13 @@ namespace Snake
         private ConsoleColor lastEffectColor = ConsoleColor.White;
         private DateTime lastEffectUntilUtc = DateTime.MinValue;
 
-        public Game(int baseTickMs)
+        public Game(int baseTickMs, Window window)
         {
             this.baseTickMs = baseTickMs;
 
             ReadConsoleSize();
             DefinePlayfield();
-
+            this.window = window;
             snake = new Snake(this);
             food = SpawnFood();
         }
@@ -401,7 +403,22 @@ namespace Snake
             }
             else
             {
-                Console.BackgroundColor = ConsoleColor.Black;
+
+                ConsoleColor backgroundcolor = window.BackgroundColor switch
+                {
+                    1 => ConsoleColor.DarkRed,
+                    2 => ConsoleColor.DarkBlue,
+                    3 => ConsoleColor.DarkGreen,
+                    4 => ConsoleColor.DarkYellow,
+                    5 => ConsoleColor.DarkMagenta,
+                    6 => ConsoleColor.Black,
+                    7 => ConsoleColor.White,
+                    8 => ConsoleColor.DarkGray,
+                    9 => ConsoleColor.Gray,
+                    _ => ConsoleColor.Black // default
+                };
+                Console.BackgroundColor = backgroundcolor;
+                
             }
 
             Console.Clear();
