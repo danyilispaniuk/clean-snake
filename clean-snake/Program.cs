@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Threading;
 
 namespace Snake
@@ -12,13 +10,15 @@ namespace Snake
         static void Main()
         {
             Console.CursorVisible = false;
-
             Console.WindowWidth = 32;
             Console.WindowHeight = 16;
 
-            var game = new Game(Console.WindowWidth, Console.WindowHeight, tickMs: 120);
+            var game = new Game(Console.WindowWidth, Console.WindowHeight, 120);
             game.Run();
 
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Clear();
             Console.SetCursorPosition(2, Console.WindowHeight - 1);
             Console.CursorVisible = true;
             Console.ReadKey(true);
@@ -31,24 +31,33 @@ namespace Snake
 
         private readonly int screenWidth;
         private readonly int screenHeight;
-        private readonly int tickMs;
+        private readonly int baseTickMs;
         private readonly Random rng = new Random();
 
         public GameStatus Status { get; private set; } = GameStatus.Started;
-        public int Score { get; private set; } = 0;
+        public int Score { get; private set; }
 
         private readonly Snake snake;
-        private Pixel berry;
+        private Food food;
 
-        public Game(int screenWidth, int screenHeight, int tickMs)
+        private DateTime speedEffectUntilUtc = DateTime.MinValue;
+        private double speedMultiplier = 1.0;
+
+        private DateTime snakeColorUntilUtc = DateTime.MinValue;
+        private ConsoleColor snakeOverrideColor = ConsoleColor.Red;
+
+        private DateTime flashBackgroundUntilUtc = DateTime.MinValue;
+
+        private const int FlashPeriodMs = 150;
+
+        public Game(int screenWidth, int screenHeight, int baseTickMs)
         {
             this.screenWidth = screenWidth;
             this.screenHeight = screenHeight;
-            this.tickMs = tickMs;
+            this.baseTickMs = baseTickMs;
 
-            snake = new Snake(this, screenWidth, screenHeight);
-
-            berry = SpawnBerry();
+            snake = new Snake(screenWidth, screenHeight);
+            food = SpawnFood();
         }
 
         public void Run()
@@ -57,34 +66,47 @@ namespace Snake
 
             while (Status == GameStatus.Started)
             {
-                
                 var now = DateTime.UtcNow;
-                var dt = now - lastTick;
-                if (dt.TotalMilliseconds < tickMs)
+                int tickMs = GetCurrentTickMs(now);
+
+                if ((now - lastTick).TotalMilliseconds < tickMs)
                 {
                     Thread.Sleep(1);
                     continue;
                 }
+
                 lastTick = now;
-
-                
                 HandleInput();
-
-                
-                Step();
-
-                
-                Draw();
+                Step(now);
+                Draw(now);
             }
 
             DrawGameOver();
         }
 
+        private int GetCurrentTickMs(DateTime nowUtc)
+        {
+            if (nowUtc > speedEffectUntilUtc)
+                speedMultiplier = 1.0;
+
+            double clamped = Math.Max(0.35, Math.Min(3.0, speedMultiplier));
+            return (int)Math.Max(30, baseTickMs * clamped);
+        }
+
+        private ConsoleColor GetSnakeColor(DateTime nowUtc)
+        {
+            if (nowUtc > snakeColorUntilUtc)
+                return ConsoleColor.Red;
+
+            return snakeOverrideColor;
+        }
+
+        private bool IsBackgroundFlashing(DateTime nowUtc) => nowUtc <= flashBackgroundUntilUtc;
+
         private void HandleInput()
         {
             if (!Console.KeyAvailable) return;
 
-            
             Direction? desired = null;
 
             while (Console.KeyAvailable)
@@ -104,7 +126,7 @@ namespace Snake
                 snake.TrySetDirection(desired.Value);
         }
 
-        private void Step()
+        private void Step(DateTime nowUtc)
         {
             var nextHead = snake.PeekNextHead();
 
@@ -115,79 +137,133 @@ namespace Snake
                 return;
             }
 
-            
             if (snake.Occupies(nextHead))
             {
                 Status = GameStatus.Lost;
                 return;
             }
 
-           
-            bool ateBerry = (nextHead.X == berry.X && nextHead.Y == berry.Y);
+            bool ate = (nextHead.X == food.Pos.X && nextHead.Y == food.Pos.Y);
+            int growBy = ate ? food.GrowSegments : 0;
 
-            snake.Move(grow: ateBerry);
+            snake.Move(growBy);
 
-            if (ateBerry)
+            if (ate)
             {
-                Score++;
-                berry = SpawnBerry();
+                ApplyFoodEffect(food, nowUtc);
+                food = SpawnFood();
             }
         }
 
-        private Pixel SpawnBerry()
+        private void ApplyFoodEffect(Food f, DateTime nowUtc)
         {
-            
+            Score = Math.Max(0, Score + f.ScoreDelta);
+
+            switch (f.Type)
+            {
+                case FoodType.Chili:
+                    speedMultiplier = 0.60;
+                    speedEffectUntilUtc = nowUtc.AddSeconds(10);
+                    snakeOverrideColor = ConsoleColor.Yellow;
+                    snakeColorUntilUtc = nowUtc.AddSeconds(10);
+                    break;
+
+                case FoodType.Mushroom:
+                    speedMultiplier = 1.80;
+                    speedEffectUntilUtc = nowUtc.AddSeconds(10);
+                    snakeOverrideColor = ConsoleColor.Magenta;
+                    snakeColorUntilUtc = nowUtc.AddSeconds(10);
+                    break;
+
+                case FoodType.Lemon:
+                    snake.Shrink(2);
+                    snakeOverrideColor = ConsoleColor.DarkYellow;
+                    snakeColorUntilUtc = nowUtc.AddSeconds(10);
+                    break;
+
+                case FoodType.FlashBerry:
+                    flashBackgroundUntilUtc = nowUtc.AddSeconds(30);
+                    snakeOverrideColor = ConsoleColor.Cyan;
+                    snakeColorUntilUtc = nowUtc.AddSeconds(30);
+                    break;
+            }
+        }
+
+        private Food SpawnFood()
+        {
+            FoodType type = RollFoodType();
+
             while (true)
             {
                 int x = rng.Next(1, screenWidth - 1);
                 int y = rng.Next(1, screenHeight - 1);
-                var p = new Pixel(x, y, ConsoleColor.Cyan);
+                var pos = new Point(x, y);
 
-                if (!snake.Occupies(p))
-                    return p;
+                if (!snake.Occupies(pos))
+                    return Food.Create(type, pos);
             }
         }
 
-        private void Draw()
+        private FoodType RollFoodType()
         {
-            Console.Clear();
+            int r = rng.Next(0, 100);
+            if (r < 55) return FoodType.Apple;
+            if (r < 70) return FoodType.Chili;
+            if (r < 85) return FoodType.Mushroom;
+            if (r < 95) return FoodType.Lemon;
+            return FoodType.FlashBerry;
+        }
 
+        private void Draw(DateTime nowUtc)
+        {
+            if (IsBackgroundFlashing(nowUtc))
+            {
+                long ms = (long)(nowUtc - DateTime.UnixEpoch).TotalMilliseconds;
+                bool phase = (ms / FlashPeriodMs) % 2 == 0;
+                Console.BackgroundColor = phase ? ConsoleColor.DarkBlue : ConsoleColor.Black;
+            }
+            else
+            {
+                Console.BackgroundColor = ConsoleColor.Black;
+            }
+
+            Console.Clear();
             DrawBorder();
 
-           
-            Console.SetCursorPosition(berry.X, berry.Y);
-            Console.ForegroundColor = berry.Color;
+            Console.SetCursorPosition(food.Pos.X, food.Pos.Y);
+            Console.ForegroundColor = food.Color;
             Console.Write("■");
 
-            
-            snake.Draw();
+            var snakeColor = GetSnakeColor(nowUtc);
+            snake.Draw(snakeColor);
 
-            
             Console.SetCursorPosition(2, 0);
             Console.ForegroundColor = ConsoleColor.White;
             Console.Write($"Score: {Score}");
+
+            Console.SetCursorPosition(14, 0);
+            Console.Write($"Len: {snake.Length}");
+
+            Console.SetCursorPosition(22, 0);
+            Console.Write(IsBackgroundFlashing(nowUtc) ? "FLASH" : "     ");
         }
 
         private void DrawBorder()
         {
             Console.ForegroundColor = ConsoleColor.Gray;
 
-            
             for (int x = 0; x < screenWidth; x++)
             {
                 Console.SetCursorPosition(x, 0);
                 Console.Write("■");
-
                 Console.SetCursorPosition(x, screenHeight - 1);
                 Console.Write("■");
             }
 
-            
             for (int y = 0; y < screenHeight; y++)
             {
                 Console.SetCursorPosition(0, y);
                 Console.Write("■");
-
                 Console.SetCursorPosition(screenWidth - 1, y);
                 Console.Write("■");
             }
@@ -195,6 +271,7 @@ namespace Snake
 
         private void DrawGameOver()
         {
+            Console.BackgroundColor = ConsoleColor.Black;
             Console.Clear();
             DrawBorder();
 
@@ -208,75 +285,76 @@ namespace Snake
 
     internal sealed class Snake
     {
-        private readonly Game game;
         private readonly int screenWidth;
         private readonly int screenHeight;
-
-        
-        private readonly Queue<Pixel> body = new Queue<Pixel>();
+        private readonly Queue<Point> body = new Queue<Point>();
 
         public Direction Direction { get; private set; } = Direction.Right;
+        public int Length => body.Count;
 
-        public Snake(Game game, int screenWidth, int screenHeight)
+        public Snake(int screenWidth, int screenHeight)
         {
-            this.game = game;
             this.screenWidth = screenWidth;
             this.screenHeight = screenHeight;
 
-            
             int startX = screenWidth / 2;
             int startY = screenHeight / 2;
-
-            body.Enqueue(new Pixel(startX, startY, ConsoleColor.Red));
+            body.Enqueue(new Point(startX, startY));
         }
-
-        public int Length => body.Count;
 
         public void TrySetDirection(Direction newDir)
         {
-            
             if (IsOpposite(Direction, newDir)) return;
             Direction = newDir;
         }
 
-        public Pixel PeekNextHead()
+        public Point PeekNextHead()
         {
             var head = body.Last();
             return Direction switch
             {
-                Direction.Up => new Pixel(head.X, head.Y - 1, ConsoleColor.Red),
-                Direction.Down => new Pixel(head.X, head.Y + 1, ConsoleColor.Red),
-                Direction.Left => new Pixel(head.X - 1, head.Y, ConsoleColor.Red),
-                Direction.Right => new Pixel(head.X + 1, head.Y, ConsoleColor.Red),
+                Direction.Up => new Point(head.X, head.Y - 1),
+                Direction.Down => new Point(head.X, head.Y + 1),
+                Direction.Left => new Point(head.X - 1, head.Y),
+                Direction.Right => new Point(head.X + 1, head.Y),
                 _ => head
             };
         }
 
-        public bool Occupies(Pixel p) => body.Any(b => b.X == p.X && b.Y == p.Y);
+        public bool Occupies(Point p) => body.Any(b => b.X == p.X && b.Y == p.Y);
 
-        public void Move(bool grow)
+        public void Move(int growBySegments)
         {
-            var nextHead = PeekNextHead();
+            body.Enqueue(PeekNextHead());
 
-            
-
-            body.Enqueue(nextHead);
-
-            if (!grow)
+            if (growBySegments <= 0)
+            {
                 body.Dequeue();
+                return;
+            }
+
+            for (int i = 1; i < growBySegments; i++)
+            {
+                var tail = body.Peek();
+                body.Enqueue(tail);
+            }
         }
 
-        public void Draw()
+        public void Shrink(int segments)
         {
-            
-            var arr = body.ToArray();
-            for (int i = 0; i < arr.Length; i++)
+            while (segments > 0 && body.Count > 1)
             {
-                var p = arr[i];
-                bool isHead = (i == arr.Length - 1);
+                body.Dequeue();
+                segments--;
+            }
+        }
 
+        public void Draw(ConsoleColor snakeColorOverride)
+        {
+            foreach (var p in body)
+            {
                 Console.SetCursorPosition(p.X, p.Y);
-                Console.ForegroundColor = isHead ? ConsoleColor.Red : ConsoleColor.Green;
+                Console.ForegroundColor = snakeColorOverride;
                 Console.Write("■");
             }
         }
@@ -288,22 +366,57 @@ namespace Snake
             (a == Direction.Right && b == Direction.Left);
     }
 
-    internal enum Direction
+    internal enum Direction { Up, Down, Left, Right }
+
+    internal enum FoodType
     {
-        Up, Down, Left, Right
+        Apple,
+        Chili,
+        Mushroom,
+        Lemon,
+        FlashBerry
     }
 
-    internal readonly struct Pixel
+    internal readonly struct Food
+    {
+        public FoodType Type { get; }
+        public Point Pos { get; }
+        public ConsoleColor Color { get; }
+        public int ScoreDelta { get; }
+        public int GrowSegments { get; }
+
+        private Food(FoodType type, Point pos, ConsoleColor color, int scoreDelta, int growSegments)
+        {
+            Type = type;
+            Pos = pos;
+            Color = color;
+            ScoreDelta = scoreDelta;
+            GrowSegments = growSegments;
+        }
+
+        public static Food Create(FoodType type, Point pos)
+        {
+            return type switch
+            {
+                FoodType.Apple => new Food(type, pos, ConsoleColor.Cyan, 1, 1),
+                FoodType.Chili => new Food(type, pos, ConsoleColor.Red, 2, 1),
+                FoodType.Mushroom => new Food(type, pos, ConsoleColor.Magenta, 1, 1),
+                FoodType.Lemon => new Food(type, pos, ConsoleColor.Yellow, -1, 0),
+                FoodType.FlashBerry => new Food(type, pos, ConsoleColor.White, 3, 1),
+                _ => new Food(FoodType.Apple, pos, ConsoleColor.Cyan, 1, 1),
+            };
+        }
+    }
+
+    internal readonly struct Point
     {
         public int X { get; }
         public int Y { get; }
-        public ConsoleColor Color { get; }
 
-        public Pixel(int x, int y, ConsoleColor color)
+        public Point(int x, int y)
         {
             X = x;
             Y = y;
-            Color = color;
         }
     }
 }
