@@ -1,4 +1,4 @@
-﻿using System;
+﻿    using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -14,8 +14,7 @@ namespace clean_snake
 
             int screenwidth = 0;
             int screenheight = 0;
-            int backgroundColor = 6; 
-
+            int backgroundColor = 6;
 
             screenwidth = Window.SetWindowSize("width");
             Console.WriteLine(value: $"Width set to {screenwidth}.");

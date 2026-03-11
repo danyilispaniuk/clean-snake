@@ -6,17 +6,17 @@ namespace clean_snake
 {
     internal sealed class Game
     {
-        public enum GameStatus { Started, Finished, Won, Lost }
+        public enum gameStatus { Started, Finished, Won, Lost }
 
         public Window window;
 
         private int screenWidth;
         private int screenHeight;
 
-        private int PlayLeft;
-        private int PlayTop;
-        private int PlayRight;
-        private int PlayBottom;
+        private int playLeft;
+        private int playTop;
+        private int playRight;
+        private int playBottom;
 
         private int fieldWidth;
         private int fieldHeight;
@@ -24,8 +24,8 @@ namespace clean_snake
         private readonly int baseTickMs;
         private readonly Random rng = new Random();
 
-        public GameStatus Status { get; private set; } = GameStatus.Started;
-        public int Score { get; private set; }
+        public gameStatus status { get; private set; } = gameStatus.Started;
+        public int score { get; private set; }
 
         private readonly Snake snake;
         private Food food;
@@ -37,7 +37,7 @@ namespace clean_snake
         private ConsoleColor snakeOverrideColor = ConsoleColor.Red;
 
         private DateTime flashBackgroundUntilUtc = DateTime.MinValue;
-        private const int FlashPeriodMs = 150;
+        private const int flashPeriodMs = 150;
 
         private string lastEffectText = "";
         private ConsoleColor lastEffectColor = ConsoleColor.White;
@@ -58,7 +58,7 @@ namespace clean_snake
         {
             var lastTick = DateTime.UtcNow;
 
-            while (Status == GameStatus.Started)
+            while (status == gameStatus.Started)
             {
                 if (Console.WindowWidth != screenWidth || Console.WindowHeight != screenHeight)
                 {
@@ -95,27 +95,27 @@ namespace clean_snake
 
         private void DefinePlayfield()
         {
-            PlayLeft = 0;
-            PlayTop = 4;
-            PlayRight = Math.Max(10, screenWidth - 1);
-            PlayBottom = Math.Max(8, screenHeight - 2);
+            playLeft = 0;
+            playTop = 4;
+            playRight = Math.Max(10, screenWidth - 1);
+            playBottom = Math.Max(8, screenHeight - 2);
 
-            fieldWidth = PlayRight - PlayLeft + 1;
-            fieldHeight = PlayBottom - PlayTop + 1;
+            fieldWidth = playRight - playLeft + 1;
+            fieldHeight = playBottom - playTop + 1;
 
-            if (fieldWidth < 10) { PlayRight = PlayLeft + 9; fieldWidth = 10; }
-            if (fieldHeight < 6) { PlayBottom = PlayTop + 5; fieldHeight = 6; }
+            if (fieldWidth < 10) { playRight = playLeft + 9; fieldWidth = 10; }
+            if (fieldHeight < 6) { playBottom = playTop + 5; fieldHeight = 6; }
         }
 
         public bool IsInsidePlayableArea(Point p)
         {
-            return p.X > PlayLeft && p.X < PlayRight && p.Y > PlayTop && p.Y < PlayBottom;
+            return p.X > playLeft && p.X < playRight && p.Y > playTop && p.Y < playBottom;
         }
 
         public Point ClampToPlayableArea(Point p)
         {
-            int x = Math.Max(PlayLeft + 1, Math.Min(PlayRight - 1, p.X));
-            int y = Math.Max(PlayTop + 1, Math.Min(PlayBottom - 1, p.Y));
+            int x = Math.Max(playLeft + 1, Math.Min(playRight - 1, p.X));
+            int y = Math.Max(playTop + 1, Math.Min(playBottom - 1, p.Y));
             return new Point(x, y);
         }
 
@@ -125,17 +125,17 @@ namespace clean_snake
 
             for (int i = 0; i < maxAttempts; i++)
             {
-                int x = rng.Next(PlayLeft + 1, PlayRight);
-                int y = rng.Next(PlayTop + 1, PlayBottom);
+                int x = rng.Next(playLeft + 1, playRight);
+                int y = rng.Next(playTop + 1, playBottom);
                 var p = new Point(x, y);
 
                 if (!snake.Occupies(p))
                     return p;
             }
 
-            for (int y = PlayTop + 1; y <= PlayBottom - 1; y++)
+            for (int y = playTop + 1; y <= playBottom - 1; y++)
             {
-                for (int x = PlayLeft + 1; x <= PlayRight - 1; x++)
+                for (int x = playLeft + 1; x <= playRight - 1; x++)
                 {
                     var p = new Point(x, y);
                     if (!snake.Occupies(p))
@@ -143,7 +143,7 @@ namespace clean_snake
                 }
             }
 
-            return new Point(PlayLeft + 1, PlayTop + 1);
+            return new Point(playLeft + 1, playTop + 1);
         }
 
         private int GetCurrentTickMs(DateTime nowUtc)
@@ -208,13 +208,13 @@ namespace clean_snake
 
             if (!IsInsidePlayableArea(nextHead))
             {
-                Status = GameStatus.Lost;
+                status = gameStatus.Lost;
                 return;
             }
 
             if (snake.Occupies(nextHead))
             {
-                Status = GameStatus.Lost;
+                status = gameStatus.Lost;
                 return;
             }
 
@@ -235,7 +235,7 @@ namespace clean_snake
 
         private void ApplyFoodEffect(Food f, DateTime nowUtc)
         {
-            Score = Math.Max(0, Score + f.ScoreDelta);
+            score = Math.Max(0, score + f.ScoreDelta);
 
             if (f.Type == FoodType.Apple)
             {
@@ -322,7 +322,7 @@ namespace clean_snake
             if (IsBackgroundFlashing(nowUtc))
             {
                 long ms = (long)(nowUtc - DateTime.UnixEpoch).TotalMilliseconds;
-                bool phase = (ms / FlashPeriodMs) % 2 == 0;
+                bool phase = (ms / flashPeriodMs) % 2 == 0;
                 Console.BackgroundColor = phase ? ConsoleColor.DarkBlue : ConsoleColor.Black;
             }
             else
@@ -347,7 +347,7 @@ namespace clean_snake
 
             Console.SetCursorPosition(2, 0);
             Console.ForegroundColor = window.Theme.UiColor;
-            Console.Write($"Score:{Score}".PadRight(12));
+            Console.Write($"Score:{score}".PadRight(12));
 
             Console.SetCursorPosition(12, 0);
             Console.Write($"Len:{snake.Length}".PadRight(10));
@@ -410,19 +410,19 @@ namespace clean_snake
         {
             Console.ForegroundColor = window.Theme.WallColor;
 
-            for (int x = PlayLeft; x <= PlayRight; x++)
+            for (int x = playLeft; x <= playRight; x++)
             {
-                Console.SetCursorPosition(x, PlayTop);
+                Console.SetCursorPosition(x, playTop);
                 Console.Write("■");
-                Console.SetCursorPosition(x, PlayBottom);
+                Console.SetCursorPosition(x, playBottom);
                 Console.Write("■");
             }
 
-            for (int y = PlayTop; y <= PlayBottom; y++)
+            for (int y = playTop; y <= playBottom; y++)
             {
-                Console.SetCursorPosition(PlayLeft, y);
+                Console.SetCursorPosition(playLeft, y);
                 Console.Write("■");
-                Console.SetCursorPosition(PlayRight, y);
+                Console.SetCursorPosition(playRight, y);
                 Console.Write("■");
             }
         }
@@ -436,10 +436,10 @@ namespace clean_snake
 
             Console.ForegroundColor = ConsoleColor.White;
             int cx = Math.Max(2, screenWidth / 5);
-            int cy = Math.Max(5, (PlayTop + PlayBottom) / 2);
+            int cy = Math.Max(5, (playTop + playBottom) / 2);
 
             Console.SetCursorPosition(cx, cy);
-            Console.Write($"Game over, Score: {Score}");
+            Console.Write($"Game over, Score: {score}");
             Console.SetCursorPosition(cx, cy + 1);
             Console.Write("Press any key...");
         }
