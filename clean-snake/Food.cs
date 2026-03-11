@@ -3,43 +3,49 @@ using System.Collections.Generic;
 using System.Text;
 namespace clean_snake
 {
-    internal enum FoodType
-    {
-        Apple,
-        Chili,
-        Mushroom,
-        Lemon,
-        FlashBerry
-    }
-
-    internal readonly struct Food
-    {
-        public FoodType Type { get; }
-        public Point Pos { get; }
-        public ConsoleColor Color { get; }
-        public int ScoreDelta { get; }
-        public int GrowSegments { get; }
-
-        private Food(FoodType type, Point pos, ConsoleColor color, int scoreDelta, int growSegments)
+        internal abstract class Food
         {
-            Type = type;
-            Pos = pos;
-            Color = color;
-            ScoreDelta = scoreDelta;
-            GrowSegments = growSegments;
-        }
+            public Point Pos { get; }
+            public ConsoleColor Color { get; }
+            public int ScoreDelta { get; }
+            public int GrowSegments { get; }
 
-        public static Food Create(FoodType type, Point pos)
-        {
-            return type switch
+            
+            protected Food(Point pos, ConsoleColor color, int scoreDelta, int growSegments)
             {
-                FoodType.Apple => new Food(type, pos, ConsoleColor.Cyan, 1, 1),
-                FoodType.Chili => new Food(type, pos, ConsoleColor.Red, 2, 1),
-                FoodType.Mushroom => new Food(type, pos, ConsoleColor.Magenta, 1, 1),
-                FoodType.Lemon => new Food(type, pos, ConsoleColor.Yellow, -1, 0),
-                FoodType.FlashBerry => new Food(type, pos, ConsoleColor.White, 3, 1),
-                _ => new Food(FoodType.Apple, pos, ConsoleColor.Cyan, 1, 1),
-            };
+                Pos = pos;
+                Color = color;
+                ScoreDelta = scoreDelta;
+                GrowSegments = growSegments;
+            }
         }
-    }
+
+        internal class Apple : Food
+        {
+            
+            public Apple(Point pos) : base(pos, ConsoleColor.Cyan, 1, 1) { }
+        }
+
+        internal class Chili : Food
+        {
+            public Chili(Point pos) : base(pos, ConsoleColor.Red, 2, 1) { }
+        }
+
+        internal class Mushroom : Food
+        {
+            public Mushroom(Point pos) : base(pos, ConsoleColor.Magenta, 1, 1) { }
+        }
+
+        internal class Lemon : Food
+        {
+            public Lemon(Point pos) : base(pos, ConsoleColor.Yellow, -1, 0) { }
+        }
+
+        internal class FlashBerry : Food
+        {
+            public FlashBerry(Point pos) : base(pos, ConsoleColor.White, 3, 1) { }
+        }
+ 
+
+
 }

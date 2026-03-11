@@ -7,7 +7,7 @@ namespace clean_snake
         public int WindowHeight { get; set; }
         public int WindowWidth { get; set; }
         public Theme Theme { get; set; }
-
+        const int DefaultSize = 25;
         public Window()
         {
             WindowHeight = 400;
@@ -33,7 +33,7 @@ namespace clean_snake
         public static int SetWindowSize(string type)
         {
             bool isInputValid = false;
-            int size = 25; //Default size
+            int size = DefaultSize; //Default size
 
             while (!isInputValid)
             {

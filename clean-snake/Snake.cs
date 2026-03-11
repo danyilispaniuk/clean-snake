@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq; // Обязательно для работы методов .Last() и .Any()
+
 namespace clean_snake
 {
-
     internal sealed class Snake
     {
         private readonly Queue<Point> body = new Queue<Point>();
@@ -12,13 +12,19 @@ namespace clean_snake
         public Direction Direction { get; private set; } = Direction.Right;
         public int Length => body.Count;
 
+       
+        public IEnumerable<Point> Body => body;
+
         public Snake(Game game)
         {
             this.game = game;
 
-            int startX = Console.WindowWidth / 2;
-            int startY = Math.Max(6, Console.WindowHeight / 2);
-            var start = game.ClampToPlayableArea(new Point(startX, startY));
+            
+            int startX = game.playfield.ScreenWidth / 2;
+            int startY = Math.Max(6, game.playfield.ScreenHeight / 2);
+
+            
+            var start = game.playfield.Clamp(new Point(startX, startY));
             body.Enqueue(start);
         }
 
@@ -27,7 +33,8 @@ namespace clean_snake
             var arr = body.ToArray();
             body.Clear();
             foreach (var p in arr)
-                body.Enqueue(game.ClampToPlayableArea(p));
+                
+                body.Enqueue(game.playfield.Clamp(p));
         }
 
         public void TrySetDirection(Direction newDir)
