@@ -2,7 +2,7 @@ using System;
 
 namespace clean_snake
 {
-    public class WallColor : ThemeColor
+    internal class WallColor : BaseColor
     {
         public WallColor(ConsoleColor color) : base(color) { }
     }

@@ -1,32 +1,32 @@
-﻿using System;
+using System;
 
 namespace clean_snake
 {
     public class Window
     {
-        public int WindowHeight { get; set; }
-        public int WindowWidth { get; set; }
-        public Theme Theme { get; set; }
+        public int windowHeight { get; set; }
+        public int windowWidth { get; set; }
+        public ThemeColorScheme theme { get; set; }
 
         public Window()
         {
-            WindowHeight = 400;
-            WindowWidth = 600;
-            Theme = Theme.GetThemeById(6); // Default Black theme
+            windowHeight = 400;
+            windowWidth = 600;
+            theme = ThemeColorScheme.GetThemeById(6); // Default Black theme
         }
 
         public Window(int windowHeight, int windowWidth, int themeId)
         {
-            WindowHeight = windowHeight;
-            WindowWidth = windowWidth;
-            Theme = Theme.GetThemeById(themeId);
+            this.windowHeight = windowHeight;
+            this.windowWidth = windowWidth;
+            theme = ThemeColorScheme.GetThemeById(themeId);
         }
 
         public void Apply()
         {
-            Console.WindowHeight = WindowHeight;
-            Console.WindowWidth = WindowWidth;
-            Console.BackgroundColor = Theme.BackgroundColor;
+            Console.WindowHeight = windowHeight;
+            Console.WindowWidth = windowWidth;
+            Console.BackgroundColor = theme.BackgroundColor;
             Console.Clear();
         }
 
@@ -72,7 +72,7 @@ namespace clean_snake
                 try
                 {
                     Console.WriteLine("Choose a background color:");
-                    Console.WriteLine("1. Red\t\t2. Blue\t\t3. Green\n4. Yellow\t5. Magenta\t6. Black\n7. White\t8. Dark grey\t9. Grey");
+                    Console.WriteLine("1. Red\t\t2. Blue\t\t3. Green\n4-9. Black");
                     themeNumber = int.Parse(Console.ReadLine());
 
                     if (themeNumber < 1 || themeNumber > 9)

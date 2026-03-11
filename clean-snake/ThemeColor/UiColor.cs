@@ -2,7 +2,7 @@ using System;
 
 namespace clean_snake
 {
-    public class UiColor : ThemeColor
+    internal class UiColor : BaseColor
     {
         public UiColor(ConsoleColor color) : base(color) { }
     }
