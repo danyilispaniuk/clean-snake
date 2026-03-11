@@ -5,14 +5,14 @@ namespace clean_snake
 {
     internal sealed class Game
     {
-        public enum GameStatus { Started, Finished, Won, Lost }
+        public enum gameStatus { Started, Finished, Won, Lost }
 
         public Window window;
         private readonly int baseTickMs;
         private readonly Random rng = new Random();
 
-        public GameStatus Status { get; private set; } = GameStatus.Started;
-        public int Score { get; private set; }
+        public gameStatus status { get; private set; } = gameStatus.Started;
+        public int score { get; private set; }
 
         public readonly Playfield playfield;  
         private readonly Snake snake;
@@ -45,7 +45,7 @@ namespace clean_snake
         {
             var lastTick = DateTime.UtcNow;
 
-            while (Status == GameStatus.Started)
+            while (status == gameStatus.Started)
             {
                
                 if (playfield.UpdateSize())
@@ -112,7 +112,7 @@ namespace clean_snake
 
             if (!playfield.IsInside(nextHead) || snake.Occupies(nextHead))
             {
-                Status = GameStatus.Lost;
+                status = gameStatus.Lost;
                 return;
             }
 
@@ -170,7 +170,7 @@ namespace clean_snake
 
         private void ApplyFoodEffect(Food f, DateTime nowUtc)
         {
-            Score = Math.Max(0, Score + f.ScoreDelta);
+            score = Math.Max(0, score + f.ScoreDelta);
 
             if (f is Apple)
             {
