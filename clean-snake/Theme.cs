@@ -25,16 +25,16 @@ namespace clean_snake
         {
             return id switch
             {
-                1 => new Theme(ConsoleColor.DarkRed, ConsoleColor.White, ConsoleColor.Gray, ConsoleColor.White, ConsoleColor.Yellow, ConsoleColor.DarkGray),
-                2 => new Theme(ConsoleColor.DarkBlue, ConsoleColor.Cyan, ConsoleColor.White, ConsoleColor.Cyan, ConsoleColor.Yellow, ConsoleColor.Gray),
-                3 => new Theme(ConsoleColor.DarkGreen, ConsoleColor.Yellow, ConsoleColor.White, ConsoleColor.Yellow, ConsoleColor.Cyan, ConsoleColor.Gray),
-                4 => new Theme(ConsoleColor.DarkYellow, ConsoleColor.Black, ConsoleColor.Black, ConsoleColor.Black, ConsoleColor.DarkBlue, ConsoleColor.DarkGray),
-                5 => new Theme(ConsoleColor.DarkMagenta, ConsoleColor.White, ConsoleColor.White, ConsoleColor.White, ConsoleColor.Yellow, ConsoleColor.Gray),
-                6 => new Theme(ConsoleColor.Black, ConsoleColor.Green, ConsoleColor.White, ConsoleColor.Gray, ConsoleColor.Cyan, ConsoleColor.DarkGray),
-                7 => new Theme(ConsoleColor.White, ConsoleColor.DarkBlue, ConsoleColor.Black, ConsoleColor.DarkGray, ConsoleColor.DarkBlue, ConsoleColor.Gray),
-                8 => new Theme(ConsoleColor.DarkGray, ConsoleColor.Magenta, ConsoleColor.White, ConsoleColor.White, ConsoleColor.Cyan, ConsoleColor.Gray),
-                9 => new Theme(ConsoleColor.Gray, ConsoleColor.Black, ConsoleColor.Black, ConsoleColor.Black, ConsoleColor.DarkBlue, ConsoleColor.DarkGray),
-                _ => new Theme(ConsoleColor.Black, ConsoleColor.Red, ConsoleColor.White, ConsoleColor.Gray, ConsoleColor.Cyan, ConsoleColor.DarkGray) // Default
+                1 => new Theme(ConsoleColor.DarkRed, ConsoleColor.White, ConsoleColor.Gray, ConsoleColor.White, ConsoleColor.Yellow, ConsoleColor.DarkRed),
+                2 => new Theme(ConsoleColor.DarkBlue, ConsoleColor.Cyan, ConsoleColor.White, ConsoleColor.Cyan, ConsoleColor.Yellow, ConsoleColor.DarkBlue),
+                3 => new Theme(ConsoleColor.DarkGreen, ConsoleColor.Yellow, ConsoleColor.White, ConsoleColor.Yellow, ConsoleColor.Cyan, ConsoleColor.DarkGreen),
+                4 => new Theme(ConsoleColor.DarkYellow, ConsoleColor.Black, ConsoleColor.Black, ConsoleColor.Black, ConsoleColor.DarkBlue, ConsoleColor.DarkYellow),
+                5 => new Theme(ConsoleColor.DarkMagenta, ConsoleColor.White, ConsoleColor.White, ConsoleColor.White, ConsoleColor.Yellow, ConsoleColor.DarkMagenta),
+                6 => new Theme(ConsoleColor.Black, ConsoleColor.Green, ConsoleColor.White, ConsoleColor.Gray, ConsoleColor.Cyan, ConsoleColor.Black),
+                7 => new Theme(ConsoleColor.White, ConsoleColor.DarkBlue, ConsoleColor.Black, ConsoleColor.DarkGray, ConsoleColor.DarkBlue, ConsoleColor.White),
+                8 => new Theme(ConsoleColor.DarkGray, ConsoleColor.Magenta, ConsoleColor.White, ConsoleColor.White, ConsoleColor.Cyan, ConsoleColor.DarkGray),
+                9 => new Theme(ConsoleColor.Gray, ConsoleColor.Black, ConsoleColor.Black, ConsoleColor.Black, ConsoleColor.DarkBlue, ConsoleColor.Gray),
+                _ => new Theme(ConsoleColor.Black, ConsoleColor.Red, ConsoleColor.White, ConsoleColor.Gray, ConsoleColor.Cyan, ConsoleColor.Black) // Default
             };
         }
     }
