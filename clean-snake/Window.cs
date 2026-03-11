@@ -6,44 +6,45 @@ namespace clean_snake
     {
         public int windowHeight { get; set; }
         public int windowWidth { get; set; }
-        public ThemeColorScheme theme { get; set; }
+        public ColorScheme colorScheme { get; set; }
         const int defaultSize = 25;
+        const int defultColorScheme = 6;
 
         public Window()
         {
             windowHeight = 400;
             windowWidth = 600;
-            theme = ThemeColorScheme.GetThemeById(6); // Default Black theme
+            colorScheme = ColorScheme.GetColorSchemeById(defultColorScheme);
         }
 
         public Window(int windowHeight, int windowWidth, int themeId)
         {
             this.windowHeight = windowHeight;
             this.windowWidth = windowWidth;
-            theme = ThemeColorScheme.GetThemeById(themeId);
+            colorScheme = ColorScheme.GetColorSchemeById(themeId);
         }
 
         public void Apply()
         {
             Console.WindowHeight = windowHeight;
             Console.WindowWidth = windowWidth;
-            Console.BackgroundColor = theme.BackgroundColor;
+            Console.BackgroundColor = colorScheme.BackgroundColor;
             Console.Clear();
         }
 
         public static int SetWindowSize(string type)
         {
             bool isInputValid = false;
-            int size = defaultSize; //Default size
+            int size = defaultSize;
 
             while (!isInputValid)
             {
                 try
                 {
                     Console.WriteLine("Enter a width of game window (minimum 25):");
-                    size = int.Parse(Console.ReadLine());
+                    size = int.Parse(s: Console.ReadLine());
 
-                    if (size < 25)
+                    if (size < defaultSize)
                     {
                         throw new Exception($"The {type} is too small! Please enter 25 or more.");
                     }
@@ -66,7 +67,7 @@ namespace clean_snake
         public static int SetTheme()
         {
             bool isInputValid = false;
-            int themeNumber = 6; // Default black theme
+            int themeNumber = defultColorScheme;
 
             while (!isInputValid)
             {
@@ -74,7 +75,7 @@ namespace clean_snake
                 {
                     Console.WriteLine("Choose a background color:");
                     Console.WriteLine("1. Red\t\t2. Blue\t\t3. Green\n4-9. Black");
-                    themeNumber = int.Parse(Console.ReadLine());
+                    themeNumber = int.Parse(s: Console.ReadLine());
 
                     if (themeNumber < 1 || themeNumber > 9)
                     {

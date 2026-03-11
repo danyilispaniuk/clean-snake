@@ -1,27 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq; // Обязательно для работы методов .Last() и .Any()
-
-namespace clean_snake
+﻿namespace clean_snake
 {
     internal sealed class Snake
     {
         private readonly Queue<Point> body = new Queue<Point>();
         private readonly Game game;
 
-        public Direction Direction { get; private set; } = Direction.Right;
-        public int Length => body.Count;
+        public Direction direction { get; private set; } = Direction.Right;
+        public int length => body.Count;
 
        
-        public IEnumerable<Point> Body => body;
+        public IEnumerable<Point> snakeBody => body;
 
         public Snake(Game game)
         {
             this.game = game;
 
             
-            int startX = game.playfield.ScreenWidth / 2;
-            int startY = Math.Max(6, game.playfield.ScreenHeight / 2);
+            int startX = game.playfield.screenWidth / 2;
+            int startY = Math.Max(6, game.playfield.screenHeight / 2);
 
             
             var start = game.playfield.Clamp(new Point(startX, startY));
@@ -39,24 +35,24 @@ namespace clean_snake
 
         public void TrySetDirection(Direction newDir)
         {
-            if (IsOpposite(Direction, newDir)) return;
-            Direction = newDir;
+            if (IsOpposite(direction, newDir)) return;
+            direction = newDir;
         }
 
         public Point PeekNextHead()
         {
             var head = body.Last();
-            return Direction switch
+            return direction switch
             {
-                Direction.Up => new Point(head.X, head.Y - 1),
-                Direction.Down => new Point(head.X, head.Y + 1),
-                Direction.Left => new Point(head.X - 1, head.Y),
-                Direction.Right => new Point(head.X + 1, head.Y),
+                Direction.Up => new Point(head.x, head.y - 1),
+                Direction.Down => new Point(head.x, head.y + 1),
+                Direction.Left => new Point(head.x - 1, head.y),
+                Direction.Right => new Point(head.x + 1, head.y),
                 _ => head
             };
         }
 
-        public bool Occupies(Point p) => body.Any(b => b.X == p.X && b.Y == p.Y);
+        public bool Occupies(Point p) => body.Any(b => b.x == p.x && b.y == p.y);
 
         public void Move(int growBySegments)
         {
@@ -88,7 +84,7 @@ namespace clean_snake
         {
             foreach (var p in body)
             {
-                Console.SetCursorPosition(p.X, p.Y);
+                Console.SetCursorPosition(p.x, p.y);
                 Console.ForegroundColor = snakeColorOverride;
                 Console.Write("■");
             }

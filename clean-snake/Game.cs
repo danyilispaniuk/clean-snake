@@ -69,9 +69,9 @@ namespace clean_snake
                 Step(now);
 
                 renderer.Draw(
-                    now, playfield.ScreenWidth, playfield.ScreenHeight,
-                    playfield.Left, playfield.Top, playfield.Right, playfield.Bottom,
-                    Score, snake, food,
+                    now, playfield.screenWidth, playfield.screenHeight,
+                    playfield.left, playfield.top, playfield.right, playfield.bottom,
+                    score, snake, food,
                     GetSnakeColor(now), IsBackgroundFlashing(now),
                     RemainingSeconds(now, speedEffectUntilUtc),
                     RemainingSeconds(now, snakeColorUntilUtc),
@@ -80,7 +80,7 @@ namespace clean_snake
                 );
             }
 
-            renderer.DrawGameOver(playfield.ScreenWidth, playfield.Top, playfield.Bottom, Score);
+            renderer.DrawGameOver(playfield.screenWidth, playfield.top, playfield.bottom, score);
         }
 
         private void HandleInput()
@@ -116,8 +116,8 @@ namespace clean_snake
                 return;
             }
 
-            bool ate = (nextHead.X == food.Pos.X && nextHead.Y == food.Pos.Y);
-            int growBy = ate ? food.GrowSegments : 0;
+            bool ate = (nextHead.x == food.pos.x && nextHead.y == food.pos.y);
+            int growBy = ate ? food.growSegments : 0;
 
             snake.Move(growBy);
 
@@ -140,7 +140,7 @@ namespace clean_snake
 
         private Food EnsureFoodInsideAndNotOnSnake(Food current)
         {
-            if (!playfield.IsInside(current.Pos) || snake.Occupies(current.Pos))
+            if (!playfield.IsInside(current.pos) || snake.Occupies(current.pos))
             {
                 var pos = playfield.RandomFreeCell(snake);
                 return GenerateFoodByType(current, pos);
@@ -170,49 +170,49 @@ namespace clean_snake
 
         private void ApplyFoodEffect(Food f, DateTime nowUtc)
         {
-            score = Math.Max(0, score + f.ScoreDelta);
+            score = Math.Max(0, score + f.scoreDelta);
 
             if (f is Apple)
             {
-                ShowEffect($"+{Math.Max(0, f.ScoreDelta)} score, +{f.GrowSegments} len", ConsoleColor.Cyan, nowUtc);
+                ShowEffect($"+{Math.Max(0, f.scoreDelta)} score, +{f.growSegments} len", ConsoleColor.Cyan, nowUtc);
                 return;
             }
 
             if (f is Chili)
             {
                 speedMultiplier = 0.60;
-                speedEffectUntilUtc = nowUtc.AddSeconds(10);
+                speedEffectUntilUtc = nowUtc.AddSeconds(f.effectLongevity);
                 snakeOverrideColor = ConsoleColor.Yellow;
-                snakeColorUntilUtc = nowUtc.AddSeconds(10);
-                ShowEffect("CHILI: SPEED UP (10s)", ConsoleColor.Yellow, nowUtc);
+                snakeColorUntilUtc = nowUtc.AddSeconds(f.effectLongevity);
+                ShowEffect($"CHILI: SPEED UP ({f.effectLongevity}s)", ConsoleColor.Yellow, nowUtc);
                 return;
             }
 
             if (f is Mushroom)
             {
                 speedMultiplier = 1.80;
-                speedEffectUntilUtc = nowUtc.AddSeconds(10);
+                speedEffectUntilUtc = nowUtc.AddSeconds(f.effectLongevity);
                 snakeOverrideColor = ConsoleColor.Magenta;
-                snakeColorUntilUtc = nowUtc.AddSeconds(10);
-                ShowEffect("MUSHROOM: SLOW (10s)", ConsoleColor.Magenta, nowUtc);
+                snakeColorUntilUtc = nowUtc.AddSeconds(f.effectLongevity);
+                ShowEffect($"MUSHROOM: SLOW ({f.effectLongevity}s)", ConsoleColor.Magenta, nowUtc);
                 return;
             }
 
             if (f is Lemon)
             {
-                snake.Shrink(2);
+                snake.Shrink(f.growSegments);
                 snakeOverrideColor = ConsoleColor.DarkYellow;
-                snakeColorUntilUtc = nowUtc.AddSeconds(10);
-                ShowEffect("LEMON: -2 LEN (10s color)", ConsoleColor.DarkYellow, nowUtc);
+                snakeColorUntilUtc = nowUtc.AddSeconds(f.effectLongevity);
+                ShowEffect($"LEMON: {f.growSegments} LEN ({f.effectLongevity}s)", ConsoleColor.DarkYellow, nowUtc);
                 return;
             }
 
             if (f is FlashBerry)
             {
-                flashBackgroundUntilUtc = nowUtc.AddSeconds(30);
+                flashBackgroundUntilUtc = nowUtc.AddSeconds(f.effectLongevity);
                 snakeOverrideColor = ConsoleColor.Cyan;
-                snakeColorUntilUtc = nowUtc.AddSeconds(30);
-                ShowEffect("FLASH BERRY: BACKGROUND FLASH (30s)", ConsoleColor.Cyan, nowUtc, 3);
+                snakeColorUntilUtc = nowUtc.AddSeconds(f.effectLongevity);
+                ShowEffect($"FLASH BERRY: BACKGROUND FLASH ({f.effectLongevity}s)", ConsoleColor.Cyan, nowUtc, 3);
                 return;
             }
         }
@@ -224,7 +224,7 @@ namespace clean_snake
             return (int)Math.Max(30, baseTickMs * clamped);
         }
 
-        private ConsoleColor GetSnakeColor(DateTime nowUtc) => nowUtc > snakeColorUntilUtc ? window.Theme.DefaultSnakeColor : snakeOverrideColor;
+        private ConsoleColor GetSnakeColor(DateTime nowUtc) => nowUtc > snakeColorUntilUtc ? window.colorScheme.DefaultSnakeColor : snakeOverrideColor;
         private bool IsBackgroundFlashing(DateTime nowUtc) => nowUtc <= flashBackgroundUntilUtc;
         private static int RemainingSeconds(DateTime nowUtc, DateTime untilUtc)
         {

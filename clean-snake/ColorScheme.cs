@@ -2,7 +2,7 @@ using System;
 
 namespace clean_snake
 {
-    public class ThemeColorScheme
+    public class ColorScheme
     {
         internal BackgroundColor BackgroundColor { get; }
         internal DefaultSnakeColor DefaultSnakeColor { get; }
@@ -11,7 +11,7 @@ namespace clean_snake
         internal UiAccentColor UiAccentColor { get; }
         internal UiInactiveColor UiInactiveColor { get; }
 
-        internal ThemeColorScheme(BackgroundColor background, DefaultSnakeColor snake, 
+        internal ColorScheme(BackgroundColor background, DefaultSnakeColor snake, 
                         UiColor uiColor, WallColor wallColor, UiAccentColor uiAccentColor, 
                         UiInactiveColor uiInactiveColor)
         {
@@ -23,11 +23,11 @@ namespace clean_snake
             UiInactiveColor = uiInactiveColor;
         }
 
-        public static ThemeColorScheme GetThemeById(int id)
+        public static ColorScheme GetColorSchemeById(int id)
         {
             return id switch
             {
-                1 => new ThemeColorScheme(
+                1 => new ColorScheme(
                     new BackgroundColor(ConsoleColor.DarkRed), 
                     new DefaultSnakeColor(ConsoleColor.White), 
                     new UiColor(ConsoleColor.Gray), 
@@ -35,7 +35,7 @@ namespace clean_snake
                     new UiAccentColor(ConsoleColor.Yellow), 
                     new UiInactiveColor(ConsoleColor.DarkRed)
                     ),
-                2 => new ThemeColorScheme(
+                2 => new ColorScheme(
                     new BackgroundColor(ConsoleColor.DarkBlue), 
                     new DefaultSnakeColor(ConsoleColor.Cyan), 
                     new UiColor(ConsoleColor.White), 
@@ -43,7 +43,7 @@ namespace clean_snake
                     new UiAccentColor(ConsoleColor.Yellow), 
                     new UiInactiveColor(ConsoleColor.DarkBlue)
                     ),
-                3 => new ThemeColorScheme(
+                3 => new ColorScheme(
                     new BackgroundColor(ConsoleColor.DarkGreen), 
                     new DefaultSnakeColor(ConsoleColor.Yellow), 
                     new UiColor(ConsoleColor.White), 
@@ -51,7 +51,7 @@ namespace clean_snake
                     new UiAccentColor(ConsoleColor.Cyan), 
                     new UiInactiveColor(ConsoleColor.DarkGreen)
                     ),
-                _ => new ThemeColorScheme(new BackgroundColor(ConsoleColor.Black), new DefaultSnakeColor(ConsoleColor.Red), new UiColor(ConsoleColor.White), new WallColor(ConsoleColor.Gray), new UiAccentColor(ConsoleColor.Cyan), new UiInactiveColor(ConsoleColor.Black)) // Default
+                _ => new ColorScheme(new BackgroundColor(ConsoleColor.Black), new DefaultSnakeColor(ConsoleColor.Red), new UiColor(ConsoleColor.White), new WallColor(ConsoleColor.Gray), new UiAccentColor(ConsoleColor.Cyan), new UiInactiveColor(ConsoleColor.Black)) // Default
             };
         }
     }

@@ -5,13 +5,13 @@ namespace clean_snake
 {
     internal readonly struct Point
     {
-        public int X { get; }
-        public int Y { get; }
+        public int x { get; }
+        public int y { get; }
 
         public Point(int x, int y)
         {
-            X = x;
-            Y = y;
+            this.x = x;
+            this.y = y;
         }
     }
 }
