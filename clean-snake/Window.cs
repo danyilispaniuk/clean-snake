@@ -33,7 +33,7 @@ namespace clean_snake
         public static int SetWindowSize(string type)
         {
             bool isInputValid = false;
-            int size = 25; //Default size
+            int size = 25; // Default size
 
             while (!isInputValid)
             {
