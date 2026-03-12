@@ -4,23 +4,23 @@ namespace clean_snake
 {
     public class ColorScheme
     {
-        internal BackgroundColor BackgroundColor { get; }
-        internal DefaultSnakeColor DefaultSnakeColor { get; }
-        internal UiColor UiColor { get; }
-        internal WallColor WallColor { get; }
-        internal UiAccentColor UiAccentColor { get; }
-        internal UiInactiveColor UiInactiveColor { get; }
+        internal BackgroundColor backgroundColor { get; }
+        internal DefaultSnakeColor defaultSnakeColor { get; }
+        internal UiColor uiColor { get; }
+        internal WallColor wallColor { get; }
+        internal UiAccentColor uiAccentColor { get; }
+        internal UiInactiveColor uiInactiveColor { get; }
 
-        internal ColorScheme(BackgroundColor background, DefaultSnakeColor snake, 
+        internal ColorScheme(BackgroundColor background, DefaultSnakeColor snakeColor, 
                         UiColor uiColor, WallColor wallColor, UiAccentColor uiAccentColor, 
                         UiInactiveColor uiInactiveColor)
         {
-            BackgroundColor = background;
-            DefaultSnakeColor = snake;
-            UiColor = uiColor;
-            WallColor = wallColor;
-            UiAccentColor = uiAccentColor;
-            UiInactiveColor = uiInactiveColor;
+            backgroundColor = background;
+            defaultSnakeColor = snakeColor;
+            this.uiColor = uiColor;
+            this.wallColor = wallColor;
+            this.uiAccentColor = uiAccentColor;
+            this.uiInactiveColor = uiInactiveColor;
         }
 
         public static ColorScheme GetColorSchemeById(int id)

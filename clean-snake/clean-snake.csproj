@@ -8,4 +8,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="FoodTypes\**" />
+    <EmbeddedResource Remove="FoodTypes\**" />
+    <None Remove="FoodTypes\**" />
+  </ItemGroup>
+
 </Project>

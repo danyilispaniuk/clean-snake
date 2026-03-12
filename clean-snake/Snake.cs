@@ -15,11 +15,9 @@
         {
             this.game = game;
 
-            
             int startX = game.playfield.screenWidth / 2;
             int startY = Math.Max(6, game.playfield.screenHeight / 2);
 
-            
             var start = game.playfield.Clamp(new Point(startX, startY));
             body.Enqueue(start);
         }
