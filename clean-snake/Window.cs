@@ -28,7 +28,7 @@ namespace clean_snake
         {
             Console.WindowHeight = windowHeight;
             Console.WindowWidth = windowWidth;
-            Console.BackgroundColor = colorScheme.BackgroundColor;
+            Console.BackgroundColor = colorScheme.backgroundColor;
             Console.Clear();
         }
 
@@ -64,7 +64,7 @@ namespace clean_snake
             return size;
         }
 
-        public static int SetTheme()
+        public static int SetColorScheme()
         {
             bool isInputValid = false;
             int themeNumber = defultColorScheme;
@@ -93,10 +93,7 @@ namespace clean_snake
                     Console.WriteLine(ex.Message);
                 }
             }
-
             return themeNumber;
         }
-
     }
-
 }

@@ -5,7 +5,7 @@ namespace clean_snake
     internal class ConsoleRenderer
     {
         private readonly Window window;
-        const int FlashPeriodsMs = 150;
+        const int flashPeriodsMs = 150;
         public ConsoleRenderer(Window window)
         {
             this.window = window;
@@ -23,12 +23,12 @@ namespace clean_snake
             if (isFlashing)
             {
                 long ms = (long)(nowUtc - DateTime.UnixEpoch).TotalMilliseconds;
-                bool phase = (ms / FlashPeriodsMs) % 2 == 0; 
+                bool phase = (ms / flashPeriodsMs) % 2 == 0; 
                 Console.BackgroundColor = phase ? ConsoleColor.DarkBlue : ConsoleColor.Black;
             }
             else
             {
-                Console.BackgroundColor = window.colorScheme.BackgroundColor;
+                Console.BackgroundColor = window.colorScheme.backgroundColor;
             }
 
             Console.Clear();
@@ -67,7 +67,7 @@ namespace clean_snake
 
         private void DrawUiFrame(int screenWidth, int screenHeight)
         {
-            Console.ForegroundColor = window.colorScheme.WallColor;
+            Console.ForegroundColor = window.colorScheme.wallColor;
             int top = 0;
             int bottom = Math.Min(screenHeight - 1, 3);
 
@@ -85,7 +85,7 @@ namespace clean_snake
 
         private void DrawPlayfieldBorder(int left, int top, int right, int bottom)
         {
-            Console.ForegroundColor = window.colorScheme.WallColor;
+            Console.ForegroundColor = window.colorScheme.wallColor;
             for (int x = left; x <= right; x++)
             {
                 Console.SetCursorPosition(x, top); Console.Write("■");
@@ -102,26 +102,26 @@ namespace clean_snake
                              string effectText, ConsoleColor effectColor, DateTime effectUntilUtc, DateTime nowUtc)
         {
             Console.SetCursorPosition(2, 0);
-            Console.ForegroundColor = window.colorScheme.UiColor;
+            Console.ForegroundColor = window.colorScheme.uiColor;
             Console.Write($"Score:{score}".PadRight(12));
 
             Console.SetCursorPosition(12, 0);
             Console.Write($"Len:{length}".PadRight(10));
 
             Console.SetCursorPosition(2, 1);
-            Console.ForegroundColor = window.colorScheme.UiColor;
+            Console.ForegroundColor = window.colorScheme.uiColor;
             Console.Write("Effects:".PadRight(screenWidth - 4));
 
             Console.SetCursorPosition(2, 2);
-            Console.ForegroundColor = sp > 0 ? window.colorScheme.UiAccentColor : window.colorScheme.UiInactiveColor;
+            Console.ForegroundColor = sp > 0 ? window.colorScheme.uiAccentColor : window.colorScheme.uiInactiveColor;
             Console.Write($"Speed:{(sp > 0 ? $"{sp}s" : "off"),-6}");
 
             Console.SetCursorPosition(13, 2);
-            Console.ForegroundColor = col > 0 ? window.colorScheme.UiAccentColor : window.colorScheme.UiInactiveColor;
+            Console.ForegroundColor = col > 0 ? window.colorScheme.uiAccentColor : window.colorScheme.uiInactiveColor;
             Console.Write($"Color:{(col > 0 ? $"{col}s" : "off"),-6}");
 
             Console.SetCursorPosition(24, 2);
-            Console.ForegroundColor = fl > 0 ? window.colorScheme.UiAccentColor : window.colorScheme.UiInactiveColor;
+            Console.ForegroundColor = fl > 0 ? window.colorScheme.uiAccentColor : window.colorScheme.uiInactiveColor;
             Console.Write($"Flash:{(fl > 0 ? $"{fl}s" : "off"),-6}");
 
             Console.SetCursorPosition(2, 3);
@@ -132,7 +132,7 @@ namespace clean_snake
             }
             else
             {
-                Console.ForegroundColor = window.colorScheme.UiInactiveColor;
+                Console.ForegroundColor = window.colorScheme.uiInactiveColor;
                 Console.Write("".PadRight(screenWidth - 4));
             }
         }
